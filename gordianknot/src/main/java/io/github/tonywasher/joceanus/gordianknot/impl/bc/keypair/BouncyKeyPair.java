@@ -69,7 +69,11 @@ public class BouncyKeyPair
 
     @Override
     public BouncyKeyPair getPublicOnly() {
-        return new BouncyKeyPair(getPublicKey());
+        return switch (this) {
+            case BouncyIdAwareMasterKeyPair iam -> new BouncyIdAwareMasterKeyPair(getPublicKey(), null);
+            case BouncyIdAwareUserKeyPair iau -> new BouncyIdAwareUserKeyPair(getPublicKey(), null);
+            default -> new BouncyKeyPair(getPublicKey());
+        };
     }
 
     /**

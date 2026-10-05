@@ -27,10 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
@@ -42,23 +39,17 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureS
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertUsage;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.BERSet;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.cmp.PBMParameter;
-import org.bouncycastle.asn1.cms.EncryptedContentInfo;
-import org.bouncycastle.asn1.cms.EnvelopedData;
 import org.bouncycastle.asn1.crmf.AttributeTypeAndValue;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.CertRequest;
@@ -78,7 +69,6 @@ import org.bouncycastle.asn1.x509.ExtensionsGenerator;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
@@ -131,7 +121,7 @@ public class GordianCRMBuilder {
         final CertRequest myCertReq = createCertRequest(myCert, pRequestId);
 
         /* Create the ProofOfPossession */
-        final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCert, myCertReq);
+        final ProofOfPossession myProof = createKeyPairProofOfPossession(pKeyPair, myCertReq);
 
         /* Create control if necessary */
         AttributeTypeAndValue[] myAttrs = null;
@@ -172,9 +162,12 @@ public class GordianCRMBuilder {
 
             /* record extensions */
             final ExtensionsGenerator myGenerator = new ExtensionsGenerator();
-            final GordianCoreKeyPairUsage myUsage = (GordianCoreKeyPairUsage) pCertificate.getUsage();
+            final GordianCoreCertUsage myUsage = (GordianCoreCertUsage) pCertificate.getUsage();
             myGenerator.addExtension(Extension.keyUsage, true, myUsage.getKeyPairUsage());
             myGenerator.addExtension(Extension.basicConstraints, false, new BasicConstraints(false));
+            if (myUsage.hasPurposes()) {
+                myGenerator.addExtension(Extension.extendedKeyUsage, false, myUsage.getKeyPairPurpose());
+            }
             myBuilder.setExtensions(myGenerator.generate());
 
             /* Create the Certificate request */
@@ -189,13 +182,11 @@ public class GordianCRMBuilder {
      * Create KeyPair Proof of Possession.
      *
      * @param pKeyPair     the keyStore entry
-     * @param pCertificate the local certificate
      * @param pCertRequest the certificate request
      * @return the proof of possession
      * @throws GordianException on error
      */
     private ProofOfPossession createKeyPairProofOfPossession(final GordianKeyStorePair pKeyPair,
-                                                             final GordianCoreCertificate pCertificate,
                                                              final CertRequest pCertRequest) throws GordianException {
         /* Try to send a signed proof */
         final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();
@@ -205,43 +196,8 @@ public class GordianCRMBuilder {
             return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);
         }
 
-        /* Send encrypted key via targeted encryption or request encrypted certificate */
-        final GordianCoreCertificate myTarget = theGateway.getTarget();
-        return myTarget != null
-                ? createTargetedProofOfPossession(myKeyPair, pCertificate)
-                : new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new POPOPrivKey(SubsequentMessage.encrCert));
-    }
-
-    /**
-     * Create Targeted Proof of Possession.
-     *
-     * @param pKeyPair     the keyPair
-     * @param pCertificate the local certificate
-     * @return the proof of possession
-     * @throws GordianException on error
-     */
-    private ProofOfPossession createTargetedProofOfPossession(final GordianKeyPair pKeyPair,
-                                                              final GordianCoreCertificate pCertificate) throws GordianException {
-        /* Obtain the PKCS8Encoding of the private key */
-        final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsymFactory().getKeyPairFactory();
-        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
-        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
-        final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);
-
-        /* Prepare for encryption */
-        final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();
-        final GordianCoreCertificate myTarget = theGateway.getTarget();
-        final GordianCRMResult myResult = myEncryptor.prepareForEncryption(myTarget);
-
-        /* Derive the keySet from the key */
-        final GordianKeySet myKeySet = myResult.getKeySet();
-
-        /* Create the encrypted data */
-        final EncryptedContentInfo myInfo = GordianCRMEncryptor.buildEncryptedContentInfo(myKeySet, myPKCS8Encoding, pCertificate);
-
-        /* Create the Proof of possession */
-        final EnvelopedData myEnvData = new EnvelopedData(null, new BERSet(myResult.getRecipient()), myInfo, (BERSet) null);
-        return new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new XPOPOPrivKey(myEnvData));
+        /* Request encrypted certificate */
+        return new ProofOfPossession(ProofOfPossession.TYPE_KEY_ENCIPHERMENT, new POPOPrivKey(SubsequentMessage.encrCert));
     }
 
     /**
@@ -297,31 +253,6 @@ public class GordianCRMBuilder {
 
         } catch (IOException e) {
             throw new GordianIOException("Failed to create Signed Proof of Possession", e);
-        }
-    }
-
-    /**
-     * Extended POPOPrivKey to allow encryptedKey.
-     */
-    static class XPOPOPrivKey extends POPOPrivKey {
-        /**
-         * The encrypted key.
-         */
-        private final EnvelopedData theKey;
-
-        /**
-         * Constructor.
-         *
-         * @param pEncryptedKey the encryptedKey.
-         */
-        XPOPOPrivKey(final EnvelopedData pEncryptedKey) {
-            super((PKMACValue) null);
-            theKey = pEncryptedKey;
-        }
-
-        @Override
-        public ASN1Primitive toASN1Primitive() {
-            return new DERTaggedObject(false, encryptedKey, theKey);
         }
     }
 

@@ -16,22 +16,21 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertValidity;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificateId;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreIdAwareKeyPair;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.security.spec.X509EncodedKeySpec;
-import java.time.LocalDate;
 
 /**
  * Mini Certificate implementation.
@@ -51,7 +50,7 @@ public class GordianMiniCertificate
     /**
      * Subject of certificate.
      */
-    private final GordianKeyPairUsage theUsage;
+    private final GordianCertUsage theUsage;
 
     /**
      * The encoded representation.
@@ -75,10 +74,10 @@ public class GordianMiniCertificate
     public GordianMiniCertificate(final GordianFactory pFactory,
                                   final X500Name pSubject,
                                   final GordianKeyPair pKeyPair,
-                                  final GordianKeyPairUse... pUses) throws GordianException {
+                                  final GordianCertUse... pUses) throws GordianException {
         /* Store parameters */
         theKeyPair = pKeyPair;
-        theUsage = new GordianCoreKeyPairUsage().withUses(pUses);
+        theUsage = new GordianCoreCertUsage().withUses(pUses);
 
         /* Switch to masterPublic if the key is an IdAware userKey. */
         final GordianKeyPair myKeyPair = pKeyPair instanceof GordianCoreIdAwareKeyPair myIdAware
@@ -156,13 +155,8 @@ public class GordianMiniCertificate
     }
 
     @Override
-    public boolean isValidNow() {
-        return isValidOnDate(LocalDate.now(GordianBaseData.CLOCK));
-    }
-
-    @Override
-    public boolean isValidOnDate(final LocalDate pDate) {
-        return true;
+    public GordianCertValidity getValidity() {
+        return GordianCoreCertValidity.UNLIMITED;
     }
 
     @Override
@@ -171,7 +165,7 @@ public class GordianMiniCertificate
     }
 
     @Override
-    public GordianKeyPairUsage getUsage() {
+    public GordianCertUsage getUsage() {
         return theUsage;
     }
 

@@ -17,8 +17,8 @@ final GordianFactory myFactory = ...;
 final GordianKeyStore myStore = ...;
 
 /* Create a gateway for the store */
-final GordianKeyStoreFactory myKeyStoreFactory = myFactory.getAsyncFactory().getKeyStoreFactory();
-final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+final GordianKeyStoreFactory myKeyStoreFactory = myFactory.getAsymFactory().getKeyStoreFactory();
+final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsymFactory().getKeyPairFactory();
 final GordianKeyStoreManager myMgr = myKeyStoreFactory.createKeyStoreManager(myStore);
 final GordianKeyStoreGateway myGateway = myKeyStoreFactory.createKeyStoreGateway(myMgr);
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
@@ -68,8 +68,8 @@ final GordianFactory myFactory = ...;
 final GordianKeyStore myStore = ...;
 
 /* Create a gateway for the store */
-final GordianKeyStoreFactory myKeyStoreFactory = myFactory.getAsyncFactory().getKeyStoreFactory();
-final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+final GordianKeyStoreFactory myKeyStoreFactory = myFactory.getAsymFactory().getKeyStoreFactory();
+final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsymFactory().getKeyPairFactory();
 final GordianKeyStoreManager myMgr = myKeyStoreFactory.createKeyStoreManager(myStore);
 final GordianKeyStoreGateway myGateway = myKeyStoreFactory.createKeyStoreGateway(myMgr);
 final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()

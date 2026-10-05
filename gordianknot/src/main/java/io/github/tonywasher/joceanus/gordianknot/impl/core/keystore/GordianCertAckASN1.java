@@ -35,6 +35,7 @@ import java.util.Enumeration;
  * <pre>
  * GordianCertAckASN1 ::= SEQUENCE {
  *      certRespId      INTEGER
+ *      status          GordianCertStatusASN1
  *      digestValue     OCTET STRING
  * }
  * </pre>
@@ -47,6 +48,11 @@ public class GordianCertAckASN1
     private final int theRespId;
 
     /**
+     * The status.
+     */
+    private final GordianCertStatusASN1 theStatus;
+
+    /**
      * The digestValue.
      */
     private final byte[] theDigestValue;
@@ -55,12 +61,15 @@ public class GordianCertAckASN1
      * Create the ASN1 sequence.
      *
      * @param pRespId      the responseId
+     * @param pStatus      the status
      * @param pDigestValue the digestValue
      */
     GordianCertAckASN1(final int pRespId,
+                       final GordianCertStatusASN1 pStatus,
                        final byte[] pDigestValue) {
         /* Store the Details */
         theRespId = pRespId;
+        theStatus = pStatus;
         theDigestValue = pDigestValue;
     }
 
@@ -76,6 +85,7 @@ public class GordianCertAckASN1
             /* Extract the responseId from the sequence */
             final Enumeration<?> en = pSequence.getObjects();
             theRespId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
+            theStatus = GordianCertStatusASN1.getInstance(en.nextElement());
 
             /* Extract the digestValue from the sequence */
             theDigestValue = ASN1OctetString.getInstance(en.nextElement()).getOctets();
@@ -112,6 +122,15 @@ public class GordianCertAckASN1
     }
 
     /**
+     * Obtain the status.
+     *
+     * @return the status
+     */
+    public GordianCertStatusASN1 getStatus() {
+        return theStatus;
+    }
+
+    /**
      * Obtain the digestValue.
      *
      * @return the digestValue
@@ -124,6 +143,7 @@ public class GordianCertAckASN1
     public ASN1Primitive toASN1Primitive() {
         final ASN1EncodableVector v = new ASN1EncodableVector();
         v.add(new ASN1Integer(theRespId));
+        v.add(theStatus);
         v.add(new DEROctetString(theDigestValue));
         return new DERSequence(v);
     }

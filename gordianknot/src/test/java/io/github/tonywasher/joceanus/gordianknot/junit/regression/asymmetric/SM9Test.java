@@ -24,8 +24,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
@@ -174,9 +174,9 @@ class SM9Test {
 
         /* Certificates */
         final X500Name myClientName = KeyStoreUtils.buildX500Name(KeyStoreAlias.AGREE);
-        final GordianCertificate myClientCert = myAgrees.newMiniCertificate(myClientName, mySourcePair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myClientCert = myAgrees.newMiniCertificate(myClientName, mySourcePair, GordianCertUse.AGREEMENT);
         final X500Name myTargetName = KeyStoreUtils.buildX500Name(KeyStoreAlias.TARGET);
-        final GordianCertificate myTargetCert = myAgrees.newMiniCertificate(myTargetName, myTargetPair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myTargetCert = myAgrees.newMiniCertificate(myTargetName, myTargetPair, GordianCertUse.AGREEMENT);
 
         /* Create agreement */
         final GordianAgreementSpecBuilder myAgreeBuilder = myAgrees.newAgreementSpecBuilder();
@@ -224,9 +224,9 @@ class SM9Test {
 
         /* Certificates */
         final X500Name myClientName = KeyStoreUtils.buildX500Name(KeyStoreAlias.AGREE);
-        final GordianCertificate myClientCert = mySourceAgrees.newMiniCertificate(myClientName, myEncMasterPair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myClientCert = mySourceAgrees.newMiniCertificate(myClientName, myEncMasterPair, GordianCertUse.AGREEMENT);
         final X500Name myTargetName = KeyStoreUtils.buildX500Name(KeyStoreAlias.TARGET);
-        final GordianCertificate myTargetCert = mySourceAgrees.newMiniCertificate(myTargetName, myEncMasterPair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myTargetCert = mySourceAgrees.newMiniCertificate(myTargetName, myEncMasterPair, GordianCertUse.AGREEMENT);
 
         /* Create agreement */
         final GordianAgreementSpecBuilder myAgreeBuilder = mySourceAgrees.newAgreementSpecBuilder();
@@ -248,7 +248,7 @@ class SM9Test {
         final PKCS8EncodedKeySpec myPKCS8 = myEncGenerator.getPKCS8Encoding(myEncMasterPair);
         final GordianIdAwareKeyPair myDerivedMaster = (GordianIdAwareKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
         final GordianCertificate myNewTargetCert = myTargetAgrees.newMiniCertificate(myTargetName,
-                myDerivedMaster, GordianKeyPairUse.AGREEMENT);
+                myDerivedMaster, GordianCertUse.AGREEMENT);
         final GordianAgreement myServer = myTargetAgrees.parseAgreementMessage(myClientHello);
         final GordianAgreementParams myServerParams = myServer.getAgreementParams()
                 .setServerCertificate(myNewTargetCert);
@@ -289,7 +289,7 @@ class SM9Test {
 
         /* Certificates */
         final X500Name myTargetName = KeyStoreUtils.buildX500Name(KeyStoreAlias.TARGET);
-        final GordianCertificate myTargetCert = myAgrees.newMiniCertificate(myTargetName, myTargetPair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myTargetCert = myAgrees.newMiniCertificate(myTargetName, myTargetPair, GordianCertUse.AGREEMENT);
 
         /* Create agreement */
         final GordianAgreementSpecBuilder myAgreeBuilder = myAgrees.newAgreementSpecBuilder();
@@ -326,7 +326,7 @@ class SM9Test {
 
         /* Certificates */
         final X500Name myTargetName = KeyStoreUtils.buildX500Name(KeyStoreAlias.TARGET);
-        final GordianCertificate mySourceCert = mySourceAgrees.newMiniCertificate(myTargetName, myEncMasterPair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate mySourceCert = mySourceAgrees.newMiniCertificate(myTargetName, myEncMasterPair, GordianCertUse.AGREEMENT);
 
         /* Create agreement */
         final GordianAgreementSpecBuilder myAgreeBuilder = mySourceAgrees.newAgreementSpecBuilder();
@@ -347,7 +347,7 @@ class SM9Test {
         final PKCS8EncodedKeySpec myPKCS8 = myEncGenerator.getPKCS8Encoding(myEncMasterPair);
         final GordianIdAwareKeyPair myDerivedMaster = (GordianIdAwareKeyPair) myTargetGenerator.deriveKeyPair(myX509, myPKCS8);
         final GordianAgreement myServer = myTargetAgrees.parseAgreementMessage(myClientHello);
-        final GordianCertificate myTargetCert = myTargetAgrees.newMiniCertificate(myTargetName, myDerivedMaster, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myTargetCert = myTargetAgrees.newMiniCertificate(myTargetName, myDerivedMaster, GordianCertUse.AGREEMENT);
         final GordianAgreementParams myServerParams = myServer.getAgreementParams()
                 .setServerCertificate(myTargetCert);
         myServer.updateParams(myServerParams);

@@ -8,6 +8,25 @@ buildscript {
     }
 }
 
+/* Git helper functions */
+def getGitRepo = {
+    providers.exec {
+        commandLine 'git', 'remote', 'get-url', 'origin'
+    }.standardOutput.asText.get().trim()
+}
+
+def getGitBranch = {
+    providers.exec {
+        commandLine 'git', 'symbolic-ref', '--short', 'HEAD'
+    }.standardOutput.asText.get().trim()
+}
+
+def getGitRev = {
+    providers.exec {
+        commandLine 'git', 'rev-parse', '--short=12', 'HEAD'
+    }.standardOutput.asText.get().trim()
+}
+
 /* Standard properties for the whole build */
 project.ext {
     /* MyName and inception year */
@@ -67,48 +86,6 @@ ext {
             "Build-Jdk"             : "${rootProject.ext.buildJDK}",
             "Build-OS"              : "${rootProject.ext.buildOS}"
     ]
-}
-
-/* Obtain gitBranch details */
-
-String getGitBranch() {
-    def projectDirFile = new File("$projectDir")
-
-    def srCmd = 'git symbolic-ref --short HEAD'
-    def srProc = srCmd.execute(null, projectDirFile)
-    srProc.waitForOrKill(10 * 1000)
-    if (srProc.exitValue() == 0) {
-        return srProc.text.trim()
-    }
-    return "GitBranch not found"
-}
-
-/* Obtain gitRevision details */
-
-String getGitRev() {
-    def projectDirFile = new File("$projectDir")
-
-    def rpCmd = 'git rev-parse --short=12 HEAD'
-    def rpProc = rpCmd.execute(null, projectDirFile)
-    rpProc.waitForOrKill(10 * 1000)
-    if (rpProc.exitValue() == 0) {
-        return rpProc.text.trim()
-    }
-    return "gitRevision not found"
-}
-
-/* Obtain gitRepository details */
-
-String getGitRepo() {
-    def projectDirFile = new File("$projectDir")
-
-    def rmCmd = 'git remote get-url origin'
-    def rmProc = rmCmd.execute(null, projectDirFile)
-    rmProc.waitForOrKill(10 * 1000)
-    if (rmProc.exitValue() == 0) {
-        return rmProc.text.trim()
-    }
-    return "gitRepository not found"
 }
 
 /* Obtain Maven repository style path for artifact */

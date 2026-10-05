@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
@@ -74,7 +74,7 @@ public class GordianMiniCertificateASN1
      */
     public GordianMiniCertificateASN1(final X500Name pSubject,
                                       final X509EncodedKeySpec pPublicKey,
-                                      final GordianKeyPairUsage pUsage) throws GordianException {
+                                      final GordianCertUsage pUsage) throws GordianException {
         theSubject = pSubject;
         thePublicKey = pPublicKey;
         theExtensions = GordianCertUtils.createExtensions(pUsage);
@@ -161,7 +161,7 @@ public class GordianMiniCertificateASN1
      *
      * @return the usage
      */
-    public GordianKeyPairUsage getUsage() {
+    public GordianCertUsage getUsage() {
         return GordianCertUtils.determineUsage(theExtensions);
     }
 

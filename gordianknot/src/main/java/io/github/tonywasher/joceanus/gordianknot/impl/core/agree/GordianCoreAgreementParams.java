@@ -20,8 +20,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParam
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
@@ -300,7 +300,7 @@ public class GordianCoreAgreementParams
             if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {
                 throw new GordianDataException("Client Certificate not valid for agreement");
             }
-            if (!pClient.getUsage().hasUse(GordianKeyPairUse.AGREEMENT)) {
+            if (!pClient.getUsage().hasUse(GordianCertUse.AGREEMENT)) {
                 throw new GordianDataException("Client Certificate must be capable of keyAgreement");
             }
             if (myKeyPair.isPublicOnly()) {
@@ -335,7 +335,7 @@ public class GordianCoreAgreementParams
             if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {
                 throw new GordianDataException("Server Certificate not valid for agreement");
             }
-            if (!pServer.getUsage().hasUse(GordianKeyPairUse.AGREEMENT)) {
+            if (!pServer.getUsage().hasUse(GordianCertUse.AGREEMENT)) {
                 throw new GordianDataException("Server Certificate must be capable of keyAgreement");
             }
 
@@ -392,7 +392,7 @@ public class GordianCoreAgreementParams
             }
 
             /* Check that certificate can sign data */
-            if (!pSigner.getUsage().hasUse(GordianKeyPairUse.SIGNATURE)) {
+            if (!pSigner.getUsage().hasUse(GordianCertUse.SIGNATURE)) {
                 throw new GordianDataException("Certificate must be capable of signing data");
             }
 

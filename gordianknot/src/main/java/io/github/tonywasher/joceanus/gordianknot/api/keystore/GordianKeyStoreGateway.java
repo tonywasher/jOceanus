@@ -69,14 +69,6 @@ public interface GordianKeyStoreGateway {
                      GordianZipLock pLock) throws GordianException;
 
     /**
-     * set the certificateRequest encryption entry.
-     *
-     * @param pAlias the alias
-     * @throws GordianException on error
-     */
-    void setEncryptionTarget(String pAlias) throws GordianException;
-
-    /**
      * set the Certifier.
      *
      * @param pAlias the alias

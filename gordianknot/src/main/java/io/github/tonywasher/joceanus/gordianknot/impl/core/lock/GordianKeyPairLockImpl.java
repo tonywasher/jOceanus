@@ -23,8 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
@@ -100,7 +100,7 @@ public class GordianKeyPairLockImpl
             /* Create the agreement and derive the factory */
             final GordianAsymFactory myAsymFactory = pLockingFactory.getAsymFactory();
             final GordianAgreementFactory myAgreeFactory = myAsymFactory.getAgreementFactory();
-            final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
+            final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianCertUse.AGREEMENT);
             final GordianAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
             final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(mySpec, GordianFactoryType.BC)
                     .setServerCertificate(myCert);
@@ -188,7 +188,7 @@ public class GordianKeyPairLockImpl
             final GordianAgreementFactory myAgreeFactory = myAsymFactory.getAgreementFactory();
             final byte[] myClientHello = theLockASN1.getAgreement().getEncodedBytes();
             final GordianAgreement myAgreement = myAgreeFactory.parseAgreementMessage(myClientHello);
-            final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
+            final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianCertUse.AGREEMENT);
             final GordianAgreementParams myParams = myAgreement.getAgreementParams().setServerCertificate(myCert);
             myAgreement.updateParams(myParams);
             final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getResult();

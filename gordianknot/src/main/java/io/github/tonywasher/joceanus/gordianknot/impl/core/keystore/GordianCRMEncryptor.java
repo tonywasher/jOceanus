@@ -21,14 +21,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFacto
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsymFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianIdAwareKeyPair;
@@ -49,19 +48,13 @@ import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
 import org.bouncycastle.asn1.cms.RecipientIdentifier;
 import org.bouncycastle.asn1.cms.RecipientInfo;
-import org.bouncycastle.asn1.crmf.CRMFObjectIdentifiers;
-import org.bouncycastle.asn1.crmf.EncKeyWithID;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
-import org.bouncycastle.asn1.x509.GeneralName;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Arrays;
 
 /**
@@ -137,7 +130,7 @@ public class GordianCRMEncryptor {
         /* Create the agreement */
         final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
-        final var myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(), GordianKeyPairUse.AGREEMENT);
+        final var myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(), GordianCertUse.AGREEMENT);
         final GordianKeySetSpecBuilder myBuilder = theFactory.getKeySetFactory().newKeySetSpecBuilder();
         GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySet())
                 .setServerCertificate(myCert);
@@ -236,33 +229,6 @@ public class GordianCRMEncryptor {
     }
 
     /**
-     * Build the encryptedContentInfo for a PrivateKey.
-     *
-     * @param pKeySet        the keySet to encrypt with
-     * @param pPKCS8Encoding the PKCS8Encoded privateKey
-     * @param pCertificate   the local certificate
-     * @return the encryptedContentInfo
-     * @throws GordianException on error
-     */
-    public static EncryptedContentInfo buildEncryptedContentInfo(final GordianKeySet pKeySet,
-                                                                 final PKCS8EncodedKeySpec pPKCS8Encoding,
-                                                                 final GordianCertificate pCertificate) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            /* Obtain the PrivateKeyInfo */
-            final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPKCS8Encoding.getEncoded());
-            final EncKeyWithID myKeyWithId = new EncKeyWithID(myInfo, new GeneralName(pCertificate.getSubject().getName()));
-            final byte[] myData = pKeySet.encryptBytes(myKeyWithId.getEncoded());
-            final GordianKeySetSpecASN1 myASN1 = new GordianKeySetSpecASN1(pKeySet.getKeySetSpec());
-            final AlgorithmIdentifier myAlgId = myASN1.getAlgorithmId();
-            return new EncryptedContentInfo(CRMFObjectIdentifiers.id_ct_encKeyWithID, myAlgId, new BEROctetString(myData));
-
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to create EncryptedContentInfo", e);
-        }
-    }
-
-    /**
      * Build the encryptedContentInfo.
      *
      * @param pKeySet      the keySet to encrypt with
@@ -296,8 +262,8 @@ public class GordianCRMEncryptor {
         final byte[] myEncryptedKey = pRecInfo.getEncryptedKey().getOctets();
 
         /* Derive the keySet appropriately */
-        final GordianKeyPairUsage myUsage = pCertificate.getUsage();
-        return myUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
+        final GordianCertUsage myUsage = pCertificate.getUsage();
+        return myUsage.hasUse(GordianCertUse.KEYENCRYPT)
                 ? deriveEncryptedKeySet(pKeyPair, myAlgId, myEncryptedKey)
                 : deriveAgreedKeySet(pKeyPair, myEncryptedKey);
     }
@@ -339,7 +305,7 @@ public class GordianCRMEncryptor {
         /* Handle agreement */
         final GordianAsymFactory myFactory = theFactory.getAsymFactory();
         final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
-        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair, GordianCertUse.AGREEMENT);
         final GordianAgreement myAgree = myAgreeFactory.parseAgreementMessage(pHello);
         final GordianAgreementParams myParams = myAgree.getAgreementParams().setServerCertificate(myCert);
         myAgree.updateParams(myParams);

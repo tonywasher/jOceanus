@@ -28,7 +28,8 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 @SuiteDisplayName("Asymmetric Test Suite")
 @SelectClasses({
         AsymmetricTest.class,
-        SM9Test.class
+        SM9Test.class,
+        HybridTest.class
 })
 public class AsymmetricTestSuite {
 }

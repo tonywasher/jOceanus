@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keystore;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
@@ -132,7 +132,7 @@ public class GordianCoreKeyStoreManager
     @Override
     public GordianCoreKeyStorePair createKeyPair(final GordianKeyPairSpec pKeySpec,
                                                  final X500Name pSubject,
-                                                 final GordianKeyPairUsage pUsage,
+                                                 final GordianCertUsage pUsage,
                                                  final GordianKeyStorePair pSigner,
                                                  final String pAlias,
                                                  final char[] pPassword) throws GordianException {
@@ -164,7 +164,7 @@ public class GordianCoreKeyStoreManager
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) pKeyPair.getKeyPair();
         final GordianCertificate myBase = pKeyPair.getCertificateChain().getFirst();
         final X500Name mySubject = myBase.getSubject().getName();
-        final GordianKeyPairUsage myUsage = myBase.getUsage();
+        final GordianCertUsage myUsage = myBase.getUsage();
 
         /* Create the certificate */
         final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, myKeyPair, mySubject, myUsage);
@@ -182,7 +182,7 @@ public class GordianCoreKeyStoreManager
     @Override
     public List<GordianCertificate> signKeyPair(final GordianKeyPair pKeyPair,
                                                 final X500Name pSubject,
-                                                final GordianKeyPairUsage pUsage,
+                                                final GordianCertUsage pUsage,
                                                 final GordianKeyStorePair pSigner) throws GordianException {
         /* Create the certificate */
         final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, pKeyPair, pSubject, pUsage);
@@ -202,13 +202,13 @@ public class GordianCoreKeyStoreManager
      * @throws GordianException on error
      */
     private void checkKeyPairUsage(final GordianKeyPairSpec pKeyPairSpec,
-                                   final GordianKeyPairUsage pUsage) throws GordianException {
+                                   final GordianCertUsage pUsage) throws GordianException {
         /* Determine the requirements */
-        final boolean needsSign = pUsage.hasUse(GordianKeyPairUse.CERTIFICATE)
-                || pUsage.hasUse(GordianKeyPairUse.SIGNATURE);
-        final boolean needsEnc = pUsage.hasUse(GordianKeyPairUse.KEYENCRYPT)
-                || pUsage.hasUse(GordianKeyPairUse.DATAENCRYPT);
-        final boolean needsAgree = pUsage.hasUse(GordianKeyPairUse.AGREEMENT);
+        final boolean needsSign = pUsage.hasUse(GordianCertUse.CERTIFICATE)
+                || pUsage.hasUse(GordianCertUse.SIGNATURE);
+        final boolean needsEnc = pUsage.hasUse(GordianCertUse.KEYENCRYPT)
+                || pUsage.hasUse(GordianCertUse.DATAENCRYPT);
+        final boolean needsAgree = pUsage.hasUse(GordianCertUse.AGREEMENT);
 
         /* Validate keyPairSpec against requirements */
         final GordianAsymFactory myAsymFactory = theFactory.getAsymFactory();

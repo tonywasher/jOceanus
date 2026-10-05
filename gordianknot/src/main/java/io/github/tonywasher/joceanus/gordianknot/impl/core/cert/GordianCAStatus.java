@@ -17,8 +17,8 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -69,9 +69,9 @@ public class GordianCAStatus {
      * @param pUsage        the keyPair usage
      * @param pSignerStatus the signerStatus.
      */
-    GordianCAStatus(final GordianKeyPairUsage pUsage,
+    GordianCAStatus(final GordianCertUsage pUsage,
                     final GordianCAStatus pSignerStatus) {
-        isCA = pUsage.getUsageSet().contains(GordianKeyPairUse.CERTIFICATE);
+        isCA = pUsage.getUsageSet().contains(GordianCertUse.CERTIFICATE);
         if (isCA) {
             final BigInteger mySignerPath = pSignerStatus.getPathLen();
             thePathLen = mySignerPath == null

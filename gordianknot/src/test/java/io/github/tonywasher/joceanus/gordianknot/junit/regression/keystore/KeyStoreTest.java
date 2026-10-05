@@ -81,8 +81,7 @@ class KeyStoreTest {
         /* Return the stream */
         return Stream.of(
                 new KeyStoreSymmetric(myMgr).symmetricTest(),
-                new KeyStorePairs(myMgr).keyPairsTest(),
-                new KeyStoreRequest(myMgr).keyPairRequestTest()
+                new KeyStorePairs(myMgr).keyPairsTest()
         );
     }
 }

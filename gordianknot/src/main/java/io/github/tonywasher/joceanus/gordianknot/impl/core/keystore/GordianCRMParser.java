@@ -21,9 +21,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFacto
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
@@ -145,7 +145,7 @@ public class GordianCRMParser {
         final CertTemplate myTemplate = myCertReq.getCertTemplate();
         final X500Name mySubject = myTemplate.getSubject();
         final SubjectPublicKeyInfo myPublic = myTemplate.getPublicKey();
-        final GordianKeyPairUsage myUsage = GordianCertUtils.determineUsage(myTemplate.getExtensions());
+        final GordianCertUsage myUsage = GordianCertUtils.determineUsage(myTemplate.getExtensions());
 
         /* Check the PKMacValue */
         checkPKMACValue(mySubject, myAttrs, myPublic);
@@ -467,7 +467,7 @@ public class GordianCRMParser {
         final GordianAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);
 
         /* Create agreement */
-        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(GordianCRMEncryptor.SERVER, pKeyPair, GordianKeyPairUse.AGREEMENT);
+        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(GordianCRMEncryptor.SERVER, pKeyPair, GordianCertUse.AGREEMENT);
         GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(myAgreeSpec, GordianLength.LEN_256.getByteLength())
                 .setServerCertificate(myCert);
         if (pKeyPair instanceof GordianIdAwareKeyPair) {

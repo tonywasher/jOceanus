@@ -17,9 +17,9 @@
 package io.github.tonywasher.joceanus.gordianknot.api.cert;
 
 /**
- * KeyPair Usage.
+ * Certificate Usage.
  */
-public enum GordianKeyPairUse {
+public enum GordianCertUse {
     /**
      * Certificates.
      */

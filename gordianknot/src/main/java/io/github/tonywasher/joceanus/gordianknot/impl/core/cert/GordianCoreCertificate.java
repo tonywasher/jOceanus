@@ -16,10 +16,11 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
 
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertUse;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertValidity;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificateId;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
@@ -56,9 +57,7 @@ import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.spec.X509EncodedKeySpec;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -88,9 +87,14 @@ public class GordianCoreCertificate
     private final GordianKeyPair theKeyPair;
 
     /**
-     * The KeyUsage.
+     * The CertUsage.
      */
-    private final GordianKeyPairUsage theKeyUsage;
+    private final GordianCertUsage theCertUsage;
+
+    /**
+     * The CertValidity.
+     */
+    private final GordianCertValidity theCertValidity;
 
     /**
      * The CAStatus.
@@ -159,10 +163,11 @@ public class GordianCoreCertificate
         theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, theKeyPair);
 
         /* Create the TBSCertificate */
-        theKeyUsage = new GordianCoreKeyPairUsage().withUse(GordianKeyPairUse.CERTIFICATE);
+        theCertUsage = new GordianCoreCertUsage().withUse(GordianCertUse.CERTIFICATE);
         theCAStatus = new GordianCAStatus(true);
         theTbsCertificate = buildCertificate(null, pSubject);
         theSerialNo = theTbsCertificate.getSerialNumber().getValue();
+        theCertValidity = GordianCoreCertValidity.fromCertificate(theTbsCertificate);
 
         /* Create the signature */
         theSignature = createSignature(pKeyPair);
@@ -190,23 +195,23 @@ public class GordianCoreCertificate
                                   final GordianKeyStorePair pSigner,
                                   final GordianKeyPair pKeyPair,
                                   final X500Name pSubject,
-                                  final GordianKeyPairUsage pUsage) throws GordianException {
+                                  final GordianCertUsage pUsage) throws GordianException {
         /* Store the parameters */
         theFactory = pFactory;
         theKeyPair = ((GordianBaseKeyPair) pKeyPair).getPublicOnly();
-        theKeyUsage = pUsage;
+        theCertUsage = pUsage;
 
         /* Check that the signer is allowed to sign certificates */
         final GordianKeyPair mySignerPair = pSigner.getKeyPair();
         final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pSigner.getCertificateChain().getFirst();
-        if (!mySignerCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)
-                || !mySignerCert.isValidNow()
+        if (!mySignerCert.getUsage().hasUse(GordianCertUse.CERTIFICATE)
+                || !mySignerCert.getValidity().isValidNow()
                 || isPublicOnly(mySignerPair)) {
             throw new GordianLogicException("Invalid signer");
         }
 
         /* Determine CA Status */
-        theCAStatus = new GordianCAStatus(theKeyUsage, mySignerCert.theCAStatus);
+        theCAStatus = new GordianCAStatus(theCertUsage, mySignerCert.theCAStatus);
 
         /* Determine the signatureSpec */
         theSigSpec = determineSignatureSpecForKeyPair(pSigner.getKeyPair());
@@ -217,6 +222,7 @@ public class GordianCoreCertificate
         /* Create the TBSCertificate */
         theTbsCertificate = buildCertificate(mySignerCert, pSubject);
         theSerialNo = theTbsCertificate.getSerialNumber().getValue();
+        theCertValidity = GordianCoreCertValidity.fromCertificate(theTbsCertificate);
 
         /* Create the signature */
         theSignature = createSignature(mySignerPair);
@@ -272,8 +278,9 @@ public class GordianCoreCertificate
 
             /* Access the extensions */
             final Extensions myExtensions = theTbsCertificate.getExtensions();
-            theKeyUsage = GordianCertUtils.determineUsage(myExtensions);
+            theCertUsage = GordianCertUtils.determineUsage(myExtensions);
             theCAStatus = GordianCAStatus.determineStatus(myExtensions);
+            theCertValidity = GordianCoreCertValidity.fromCertificate(theTbsCertificate);
 
             /* Create the ids */
             theSubject = buildSubjectId();
@@ -319,18 +326,8 @@ public class GordianCoreCertificate
     }
 
     @Override
-    public boolean isValidNow() {
-        return isValidOnDate(LocalDate.now(GordianBaseData.CLOCK));
-    }
-
-    @Override
-    public boolean isValidOnDate(final LocalDate pDate) {
-        /* Access the date */
-        final ZoneId myZone = GordianBaseData.CLOCK.getZone();
-        final Instant myStart = theTbsCertificate.getStartDate().getDate().toInstant();
-        final Instant myEnd = theTbsCertificate.getEndDate().getDate().toInstant();
-        return !pDate.isBefore(myStart.atZone(myZone).toLocalDate())
-                && !pDate.isAfter(myEnd.atZone(myZone).toLocalDate());
+    public GordianCertValidity getValidity() {
+        return theCertValidity;
     }
 
     /**
@@ -401,8 +398,8 @@ public class GordianCoreCertificate
     }
 
     @Override
-    public GordianKeyPairUsage getUsage() {
-        return theKeyUsage;
+    public GordianCertUsage getUsage() {
+        return theCertUsage;
     }
 
     @Override
@@ -558,8 +555,8 @@ public class GordianCoreCertificate
         }
 
         /* Check that the signing certificate is valid */
-        if (!pSigner.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)
-                || !pSigner.isValidNow()) {
+        if (!pSigner.getUsage().hasUse(GordianCertUse.CERTIFICATE)
+                || !pSigner.getValidity().isValidNow()) {
             throw new GordianDataException("Invalid signer certificate");
         }
 
@@ -580,7 +577,7 @@ public class GordianCoreCertificate
         }
 
         /* Check that the certificate is valid self-signed */
-        if (!theKeyUsage.hasUse(GordianKeyPairUse.CERTIFICATE)
+        if (!theCertUsage.hasUse(GordianCertUse.CERTIFICATE)
                 || theCAStatus.getPathLen() != null) {
             throw new GordianDataException("Invalid root certificate");
         }
@@ -613,9 +610,8 @@ public class GordianCoreCertificate
         final BigInteger mySerialNo = GordianCertUtils.newSerialNo();
 
         /* Create the startDate and endDate for the certificate */
-        final LocalDate myStart = LocalDate.now(GordianBaseData.CLOCK);
-        final LocalDate myEnd = myStart.plusYears(1);
-        final ZoneId myZone = GordianBaseData.CLOCK.getZone();
+        final ZonedDateTime myStart = ZonedDateTime.now(GordianBaseData.CLOCK);
+        final ZonedDateTime myEnd = myStart.plusYears(1);
 
         /* Obtain the publicKey Info */
         final byte[] myPublicKeyEncoded = getPublicKeyEncoded();
@@ -625,8 +621,8 @@ public class GordianCoreCertificate
         final V3TBSCertificateGenerator myCertBuilder = new V3TBSCertificateGenerator();
         myCertBuilder.setSubject(pSubject);
         myCertBuilder.setIssuer(myIssuer);
-        myCertBuilder.setStartDate(new Time(Date.from(myStart.atStartOfDay().atZone(myZone).toInstant())));
-        myCertBuilder.setEndDate(new Time(Date.from(myEnd.atStartOfDay().atZone(myZone).toInstant())));
+        myCertBuilder.setStartDate(new Time(Date.from(myStart.toInstant())));
+        myCertBuilder.setEndDate(new Time(Date.from(myEnd.toInstant())));
         myCertBuilder.setSerialNumber(new ASN1Integer(mySerialNo));
         myCertBuilder.setSubjectPublicKeyInfo(myPublicKeyInfo);
         myCertBuilder.setSignature(theSigAlgId);
@@ -634,7 +630,7 @@ public class GordianCoreCertificate
         final byte[] myIssuerId = pSigner == null ? null : pSigner.getSubjectId();
 
         /* Create extensions for the certificate */
-        myCertBuilder.setExtensions(GordianCertUtils.createExtensions(theCAStatus, theKeyUsage, mySubjectId, myIssuerId));
+        myCertBuilder.setExtensions(GordianCertUtils.createExtensions(theCAStatus, theCertUsage, mySubjectId, myIssuerId));
 
         /* Generate the TBS Certificate */
         return myCertBuilder.generateTBSCertificate();
