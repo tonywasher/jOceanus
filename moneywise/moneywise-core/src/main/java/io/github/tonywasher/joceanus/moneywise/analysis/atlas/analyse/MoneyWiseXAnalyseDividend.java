@@ -143,6 +143,7 @@ public class MoneyWiseXAnalyseDividend {
         } else {
             /* Adjust the dividend total for this asset */
             final OceanusMoney myAdjust = new OceanusMoney(myAmount);
+            myAdjust.negate();
 
             /* Any tax credit is viewed as a realised dividend from the account */
             if (myTaxCredit != null) {

@@ -105,16 +105,16 @@ public class MoneyWiseDataTestShareDividend
                 .build();
 
         /* A simple dividend to deposit */
-        theTransBuilder.date("03-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
-                .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES).amount("1200")
-                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).taxCredit("200")
-                .build();
+        //theTransBuilder.date("03-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
+        //        .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES).amount("1200")
+        //        .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).taxCredit("200")
+        //        .build();
 
         /* A simple foreign dividend to deposit */
         theTransBuilder.date("04-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
                 .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES_US).amount("200.00")
                 .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
-                .partnerAmount("180.00").taxCredit("60.00")
+                .partnerAmount("180.00").taxCredit("60.00").xchgRate("0.8")
                 .build();
 
         /* A simple foreign dividend to deposit */
