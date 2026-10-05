@@ -62,6 +62,7 @@ public class MoneyWiseReportCashFlow
      */
     protected MoneyWiseReportCashFlow(final MetisReportManager<MoneyWiseAnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
+        super(pManager.getBuilder());
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
     }

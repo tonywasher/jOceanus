@@ -36,6 +36,13 @@ import java.util.Currency;
  */
 public class MoneyWiseValidatePortfolioInfoSet
         extends PrometheusValidateInfoSet<MoneyWisePortfolioInfo> {
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidatePortfolioInfoSet() {
+        /* NoOp */
+    }
+
     @Override
     public MoneyWisePortfolio getOwner() {
         return (MoneyWisePortfolio) super.getOwner();

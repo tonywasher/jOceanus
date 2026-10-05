@@ -17,7 +17,7 @@
 /**
  * MoneyWise javaFX.
  */
-module io.github.tonywasher.moneywise.javafx {
+module io.github.tonywasher.joceanus.moneywise.javafx {
     /* JavaFX Libraries */
     requires javafx.graphics;
 

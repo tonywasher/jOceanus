@@ -120,6 +120,7 @@ public interface ThemisParserDef {
      *
      * @param pClass the class
      * @return the class name
+     * @throws OceanusException on error
      */
     String registerClass(ThemisClassInstance pClass) throws OceanusException;
 

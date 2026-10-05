@@ -48,6 +48,13 @@ public class MoneyWiseValidateSecurityInfoSet
      */
     private static final String NAME_NEWSYMBOL = "SYMBOL";
 
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateSecurityInfoSet() {
+        /* NoOp */
+    }
+
     @Override
     public MoneyWiseSecurity getOwner() {
         return (MoneyWiseSecurity) super.getOwner();

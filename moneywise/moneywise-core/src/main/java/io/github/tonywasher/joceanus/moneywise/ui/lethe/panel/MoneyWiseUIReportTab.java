@@ -26,6 +26,7 @@ import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnal
 import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysisManager;
 import io.github.tonywasher.joceanus.moneywise.analysis.lethe.data.MoneyWiseAnalysisSecurityBucket;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.moneywise.reports.atlas.MoneyWiseXReportStyleSheet;
 import io.github.tonywasher.joceanus.moneywise.reports.lethe.MoneyWiseReportBuilder;
 import io.github.tonywasher.joceanus.moneywise.reports.lethe.MoneyWiseReportStyleSheet;
 import io.github.tonywasher.joceanus.moneywise.reports.lethe.MoneyWiseReportType;
@@ -42,6 +43,8 @@ import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusGoToEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
@@ -61,6 +64,11 @@ import org.w3c.dom.Document;
  */
 public class MoneyWiseUIReportTab
         implements OceanusEventProvider<PrometheusDataEvent>, TethysUIComponent {
+    /**
+     * Logger.
+     */
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseUIReportTab.class);
+
     /**
      * Text for DataEntry Title.
      */
@@ -166,8 +174,9 @@ public class MoneyWiseUIReportTab
         thePanel.setNorth(myHeader);
         thePanel.setCentre(myHTMLScroll);
 
-        /* Load the CSS */
+        /* Load the CSS and JavaScript */
         theHTMLPane.setCSSContent(MoneyWiseReportStyleSheet.CSS_REPORT);
+        theHTMLPane.setJavaScript(MoneyWiseXReportStyleSheet.JS_REPORT);
 
         /* Create listeners */
         theView.getEventRegistrar().addEventListener(e -> refreshData());
@@ -176,7 +185,7 @@ public class MoneyWiseUIReportTab
         final OceanusEventRegistrar<PrometheusDataEvent> myRegistrar = theSelect.getEventRegistrar();
         myRegistrar.addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(PrometheusDataEvent.PRINT, e -> theHTMLPane.printIt());
-        myRegistrar.addEventListener(PrometheusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
+        myRegistrar.addEventListener(PrometheusDataEvent.SAVETOFILE, e -> saveToFile());
         theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -> {
             theManager.processReference(e.getDetails(String.class), theHTMLPane);
             e.consume();
@@ -204,6 +213,21 @@ public class MoneyWiseUIReportTab
     @Override
     public void setVisible(final boolean pVisible) {
         thePanel.setVisible(pVisible);
+    }
+
+    /**
+     * Save to file.
+     */
+    private void saveToFile() {
+        try {
+            final Document myDoc = theBuilder.createUnrestrictedReport();
+            final String myText;
+            myText = theManager.formatXML(myDoc);
+            theHTMLPane.setExternalContent(myText);
+            theHTMLPane.saveToFile();
+        } catch (OceanusException e) {
+            LOGGER.error("Failed to save to file", e);
+        }
     }
 
     /**

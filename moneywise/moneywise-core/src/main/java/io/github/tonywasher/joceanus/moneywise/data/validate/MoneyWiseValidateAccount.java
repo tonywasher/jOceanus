@@ -60,6 +60,13 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
      */
     private PrometheusEditSet theEditSet;
 
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateAccount() {
+        /* NoOp */
+    }
+
     @Override
     public void setEditSet(final PrometheusEditSet pEditSet) {
         theEditSet = pEditSet;

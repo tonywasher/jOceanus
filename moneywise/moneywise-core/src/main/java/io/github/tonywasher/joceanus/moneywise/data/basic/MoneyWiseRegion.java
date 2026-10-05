@@ -507,6 +507,13 @@ public class MoneyWiseRegion
      */
     public static class MoneyWiseRegionDataMap
             extends PrometheusDataInstanceMap<MoneyWiseRegion, String> {
+        /**
+         * Constructor.
+         */
+        public MoneyWiseRegionDataMap() {
+            /* NoOp */
+        }
+
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Access item */

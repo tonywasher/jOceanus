@@ -38,6 +38,13 @@ public class MoneyWiseValidateTransTag
      */
     private static final String NAME_NEWTAG = MoneyWiseBasicResource.TRANSTAG_NEWTAG.getValue();
 
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidateTransTag() {
+        /* NoOp */
+    }
+
     @Override
     public void setEditSet(final PrometheusEditSet pEditSet) {
         /* NoOp */

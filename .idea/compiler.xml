@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
         </processorPath>
         <module name="moneywise-javafx" />
         <module name="tethys-core" />
@@ -18,8 +19,8 @@
         <module name="tethys-swing" />
         <module name="moneywise-swing" />
         <module name="tethys-api" />
-        <module name="tethys-javafx" />
         <module name="themis-javafx" />
+        <module name="tethys-javafx" />
         <module name="prometheus-sheet-api" />
         <module name="astraeus" />
         <module name="moneywise-core" />
@@ -31,6 +32,37 @@
         <module name="prometheus-sheet-hssf" />
       </profile>
     </annotationProcessing>
+  </component>
+  <component name="ErrorProneCompilerSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-XDaddTypeAnnotationsToSymbol=true" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="astraeus" options="" />
+      <module name="bom" options="" />
+      <module name="gordianknot" options="" />
+      <module name="joceanus" options="" />
+      <module name="metis" options="" />
+      <module name="moneywise" options="" />
+      <module name="moneywise-core" options="" />
+      <module name="moneywise-javafx" options="" />
+      <module name="moneywise-swing" options="" />
+      <module name="oceanus" options="" />
+      <module name="prometheus" options="" />
+      <module name="prometheus-core" options="" />
+      <module name="prometheus-sheet-api" options="" />
+      <module name="prometheus-sheet-hssf" options="" />
+      <module name="prometheus-sheet-odf" options="" />
+      <module name="sheet" options="" />
+      <module name="tethys" options="" />
+      <module name="tethys-api" options="" />
+      <module name="tethys-core" options="" />
+      <module name="tethys-helper" options="" />
+      <module name="tethys-javafx" options="" />
+      <module name="tethys-swing" options="" />
+      <module name="tethys-test" options="" />
+      <module name="themis" options="" />
+      <module name="themis-core" options="" />
+      <module name="themis-javafx" options="" />
+    </option>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xmaxerrs 1000" />

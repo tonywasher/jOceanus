@@ -507,6 +507,13 @@ public class MoneyWiseTransTag
      */
     public static class MoneyWiseTagDataMap
             extends PrometheusDataInstanceMap<MoneyWiseTransTag, String> {
+        /**
+         * Constructor.
+         */
+        public MoneyWiseTagDataMap() {
+            /* NoOp */
+        }
+
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {
             /* Adjust name count */

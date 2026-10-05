@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.metis.report;
 
+import io.github.tonywasher.joceanus.metis.exc.MetisIOException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
-import io.github.tonywasher.joceanus.metis.exc.MetisIOException;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -89,6 +89,11 @@ public class MetisReportManager<F>
     private final Map<String, HiddenElement> theHiddenMap;
 
     /**
+     * The report.
+     */
+    private MetisReportBase<?, F> theReport;
+
+    /**
      * Constructor.
      *
      * @param pBuilder the HTML builder
@@ -145,6 +150,9 @@ public class MetisReportManager<F>
         /* Store the reference manager */
         theReferenceMgr = pReport.getReferenceMgr();
         theReferenceMgr.clearMaps();
+
+        /* Store the report */
+        theReport = pReport;
     }
 
     /**
@@ -317,11 +325,22 @@ public class MetisReportManager<F>
      * @throws OceanusException on error
      */
     public String formatXML() throws OceanusException {
+        return formatXML(theDocument);
+    }
+
+    /**
+     * Format XML.
+     *
+     * @param pDocument the document
+     * @return the formatted XML
+     * @throws OceanusException on error
+     */
+    public String formatXML(final Document pDocument) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Transform the new document */
             final StringWriter myWriter = new StringWriter();
-            theXformer.transform(new DOMSource(theDocument), new StreamResult(myWriter));
+            theXformer.transform(new DOMSource(pDocument), new StreamResult(myWriter));
             theText = myWriter.getBuffer().toString().replaceAll("[\n\r]", "");
 
             /* Return the new text */
@@ -396,11 +415,20 @@ public class MetisReportManager<F>
             }
         } catch (OceanusException e) {
             LOGGER.error("Failed to process reference", e);
-            myText = null;
+            return null;
         }
 
         /* Return the new text */
         return myText;
+    }
+
+    /**
+     * Create unrestricted report.
+     *
+     * @return the unrestricted report
+     */
+    public Document createUnrestrictedReport() {
+        return theReport.createUnrestrictedReport();
     }
 
     /**

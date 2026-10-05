@@ -97,6 +97,7 @@ public class MoneyWiseXReportMarketGrowth
      */
     MoneyWiseXReportMarketGrowth(final MetisReportManager<MoneyWiseXAnalysisFilter<?, ?>> pManager) {
         /* Access underlying utilities */
+        super(pManager.getBuilder());
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
     }
