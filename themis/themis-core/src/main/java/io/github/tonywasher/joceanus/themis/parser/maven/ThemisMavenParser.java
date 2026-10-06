@@ -272,5 +272,4 @@ public class ThemisMavenParser
         /* Return the id */
         return myIds;
     }
-
 }

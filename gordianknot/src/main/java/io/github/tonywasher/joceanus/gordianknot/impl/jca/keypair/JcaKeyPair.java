@@ -28,9 +28,9 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKe
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
-import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
-import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
-import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
+import org.bouncycastle.jcajce.interfaces.LMSPrivateKey;
+import org.bouncycastle.jcajce.interfaces.XMSSMTPrivateKey;
+import org.bouncycastle.jcajce.interfaces.XMSSPrivateKey;
 
 import javax.security.auth.DestroyFailedException;
 import java.security.PrivateKey;

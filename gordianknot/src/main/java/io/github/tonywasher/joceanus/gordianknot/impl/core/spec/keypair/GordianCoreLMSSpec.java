@@ -136,7 +136,7 @@ public class GordianCoreLMSSpec
         /* Calculate parameters */
         final LMSigParameters mySig = isValid ? getSigParameter() : null;
         final LMOtsParameters myOts = isValid ? getOtsParameter() : null;
-        theParams = isValid ? new LMSParameters(mySig, myOts) : null;
+        theParams = isValid ? LMSParameters.create(mySig, myOts) : null;
     }
 
     @Override
