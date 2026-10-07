@@ -137,6 +137,7 @@ public final class AstraeusLauncher {
                 .append("bin").append(File.separatorChar).append("java ");
         if (myPreLoader != null) {
             myBuilder.append("-Djavafx.preloader=").append(getValue("PRELOADER")).append(" ");
+            myBuilder.append("--enable-native-access=javafx.graphics,javafx.web ");
         }
         if (mySplash != null) {
             myBuilder.append("-splash:").append(getValue("SPLASH")).append(" ");

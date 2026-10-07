@@ -24,7 +24,6 @@ module io.github.tonywasher.joceanus.themis.core {
     requires java.xml;
     requires java.prefs;
     requires java.sql;
-    requires jdk.jsobject;
 
     /* External libraries */
     requires com.github.javaparser.core;

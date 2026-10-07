@@ -43,7 +43,7 @@
         <JFreeChartVersion>1.5.6</JFreeChartVersion>
         <JavaParserVersion>3.28.2</JavaParserVersion>
         <ZipSDKVersion>9.20</ZipSDKVersion>
-        <JavaFXVersion>21.0.12</JavaFXVersion>
+        <JavaFXVersion>27</JavaFXVersion>
         <EnforcerPluginVersion>3.6.3</EnforcerPluginVersion>
         <SitePluginVersion>3.22.0</SitePluginVersion>
         <jOceanusGroup>${project.groupId}</jOceanusGroup>
@@ -188,6 +188,11 @@
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-web</artifactId>
+                <version>${JavaFXVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>jdk-jsobject</artifactId>
                 <version>${JavaFXVersion}</version>
             </dependency>
             <dependency>

@@ -28,7 +28,7 @@ public class MoneyWiseFXpreLoader
     /**
      * Default constructor.
      */
-    MoneyWiseFXpreLoader() {
+    public MoneyWiseFXpreLoader() {
         /* NoOp */
     }
 

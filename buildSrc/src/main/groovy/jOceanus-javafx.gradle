@@ -6,6 +6,6 @@ plugins {
 
 /* javaFX versions */
 javafx {
-    version = "21.0.12"
+    version = "27"
     modules = [ 'javafx.graphics' ]
 }

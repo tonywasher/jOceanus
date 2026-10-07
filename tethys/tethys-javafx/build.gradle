@@ -7,7 +7,7 @@ plugins {
 
 /* javaFX versions */
 javafx {
-    modules = [ 'javafx.web', 'javafx.controls', 'javafx.graphics' ]
+    modules = [ 'javafx.web', 'javafx.controls', 'javafx.graphics', 'jdk-jsobject' ]
 }
 
 /* Dependencies */

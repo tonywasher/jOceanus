@@ -26,6 +26,10 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-web</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>jdk-jsobject</artifactId>
+    </dependency>
   </dependencies>
   <properties>
     <moduleName>${packageName}.javafx</moduleName>
