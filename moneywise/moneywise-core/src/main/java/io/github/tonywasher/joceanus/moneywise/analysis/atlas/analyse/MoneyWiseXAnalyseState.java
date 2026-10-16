@@ -47,6 +47,7 @@ import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -86,6 +87,11 @@ public class MoneyWiseXAnalyseState
      * The xchgRate map.
      */
     private final Map<MoneyWiseCurrency, OceanusRatio> theXchgRateMap;
+
+    /**
+     * The xchgRate2 map.
+     */
+    private final Map<Currency, OceanusRatio> theXchgRate2Map;
 
     /**
      * The depositRate map.
@@ -174,6 +180,7 @@ public class MoneyWiseXAnalyseState
         /* Create the maps */
         thePriceMap = new HashMap<>();
         theXchgRateMap = new HashMap<>();
+        theXchgRate2Map = new HashMap<>();
         theDepRateMap = new HashMap<>();
         thePricedBucketsMap = new HashMap<>();
         theForeignBucketsMap = new HashMap<>();
@@ -318,6 +325,7 @@ public class MoneyWiseXAnalyseState
     private void processXchgRate() {
         theNextEvent.declareExchangeRate(theNextXchgRate);
         theXchgRateMap.put(theNextXchgRate.getToCurrency(), theNextXchgRate.getExchangeRate());
+        theXchgRate2Map.put(theNextXchgRate.getToCurrency().getCurrency(), theNextXchgRate.getExchangeRate());
         iterateXchgRate();
     }
 
@@ -360,6 +368,12 @@ public class MoneyWiseXAnalyseState
     @Override
     public OceanusRatio getCurrentXchgRate(final MoneyWiseCurrency pCurrency) {
         final OceanusRatio myRate = theXchgRateMap.get(pCurrency);
+        return myRate == null ? OceanusRatio.ONE : myRate;
+    }
+
+    @Override
+    public OceanusRatio getCurrentXchgRate(final Currency pCurrency) {
+        final OceanusRatio myRate = theXchgRate2Map.get(pCurrency);
         return myRate == null ? OceanusRatio.ONE : myRate;
     }
 

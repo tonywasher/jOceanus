@@ -25,6 +25,8 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 
+import java.util.Currency;
+
 /**
  * Analysis Interfaces.
  */
@@ -132,6 +134,14 @@ public interface MoneyWiseXAnalysisInterfaces {
          * @return the rate
          */
         OceanusRatio getCurrentXchgRate(MoneyWiseCurrency pCurrency);
+
+        /**
+         * Obtain the current rate for a currency.
+         *
+         * @param pCurrency the currency
+         * @return the rate
+         */
+        OceanusRatio getCurrentXchgRate(Currency pCurrency);
 
         /**
          * Obtain the depositRate for a deposit.
