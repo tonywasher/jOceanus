@@ -104,7 +104,6 @@ public class JcaKeyPairFactory
             case DH -> new JcaDHKeyPairGenerator(theFactory, pKeySpec);
             case NEWHOPE -> new JcaNewHopeKeyPairGenerator(theFactory, pKeySpec);
             case SLHDSA -> new JcaSLHDSAKeyPairGenerator(theFactory, pKeySpec);
-            case CMCE -> new JcaCMCEKeyPairGenerator(theFactory, pKeySpec);
             case FRODO -> new JcaFrodoKeyPairGenerator(theFactory, pKeySpec);
             case SABER -> new JcaSABERKeyPairGenerator(theFactory, pKeySpec);
             case MLKEM -> new JcaMLKEMKeyPairGenerator(theFactory, pKeySpec);

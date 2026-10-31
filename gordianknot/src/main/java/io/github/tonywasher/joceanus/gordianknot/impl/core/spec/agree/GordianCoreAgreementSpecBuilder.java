@@ -126,7 +126,7 @@ public final class GordianCoreAgreementSpecBuilder
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 myAgreements.add(new GordianCoreAgreementSpec(pKeyPairSpec, GordianAgreementType.WRAP, GordianAgreementKDF.NONE));
                 break;
-            case MLKEM, CMCE, FRODO:
+            case MLKEM, FRODO:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
             case NEWHOPE, SABER, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, SMAUGT, HYBRIDKEM:

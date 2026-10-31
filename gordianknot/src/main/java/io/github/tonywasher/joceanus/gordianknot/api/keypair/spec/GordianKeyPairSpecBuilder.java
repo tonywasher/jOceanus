@@ -318,16 +318,6 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
-     * Create CMCEKey.
-     *
-     * @param pSpec the CMCE Spec
-     * @return the KeySpec
-     */
-    default GordianKeyPairSpec cmce(final GordianCMCESpec pSpec) {
-        return withKeyPairType(GordianKeyPairType.CMCE).withEnumSubSpec(pSpec).build();
-    }
-
-    /**
      * Create FRODOKey.
      *
      * @param pSpec the FRODO Spec

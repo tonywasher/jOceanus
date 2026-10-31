@@ -87,11 +87,6 @@ public enum GordianKeyPairType {
     SLHDSA,
 
     /**
-     * CMCE.
-     */
-    CMCE,
-
-    /**
      * FRODO.
      */
     FRODO,

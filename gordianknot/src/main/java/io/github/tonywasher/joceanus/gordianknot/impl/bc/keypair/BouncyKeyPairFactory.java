@@ -27,7 +27,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM9Spec.GordianSM9SignType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyAIMerKeyPair.BouncyAIMerKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyDSAKeyPair.BouncyDSAKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyDSTUKeyPair.BouncyDSTUKeyPairGenerator;
@@ -149,7 +148,6 @@ public class BouncyKeyPairFactory
             case DSA -> new BouncyDSAKeyPairGenerator(theFactory, pKeySpec);
             case DH -> new BouncyDHKeyPairGenerator(theFactory, pKeySpec);
             case SLHDSA -> new BouncySLHDSAKeyPairGenerator(theFactory, pKeySpec);
-            case CMCE -> new BouncyCMCEKeyPairGenerator(theFactory, pKeySpec);
             case FRODO -> new BouncyFrodoKeyPairGenerator(theFactory, pKeySpec);
             case SABER -> new BouncySABERKeyPairGenerator(theFactory, pKeySpec);
             case MLKEM -> new BouncyMLKEMKeyPairGenerator(theFactory, pKeySpec);

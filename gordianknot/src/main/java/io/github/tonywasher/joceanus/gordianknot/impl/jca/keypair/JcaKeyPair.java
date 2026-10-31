@@ -209,7 +209,7 @@ public class JcaKeyPair
         public boolean isClearable() {
             return switch (getKeySpec().getKeyPairType()) {
                 case EC, GOST, DSTU, RSA, DSA, DH, ELGAMAL, SM2, SM9, XMSS,
-                     LMS, MLDSA, MLKEM, SLHDSA, CMCE, FRODO -> true;
+                     LMS, MLDSA, MLKEM, SLHDSA, FRODO -> true;
                 default -> false;
             };
         }

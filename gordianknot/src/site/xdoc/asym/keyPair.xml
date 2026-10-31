@@ -63,7 +63,6 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                         <tr><td>XMSS^MT((SHA256, SHA512, SHAKE128, SHAKE256) * HEIGHT(H20, H40, H60) * LAYERS(2, 3, 4, 6, 8, 12))</td></tr>
                         <tr><td rowspan="2">LMS</td><td>(SHA256, SHAKE256) * SIG(H5,H10,H25,H20,H25) * OTS(W1,W2,W4,W8)</td></tr>
                         <tr><td>HSS(LMS * DEPTH(2..8))</td></tr>
-                        <tr><td>CMCE</td><td>(BASE, F, PC, PCF) * (4608, 6688, 6960, 8192)</td></tr>
                         <tr><td>FRODO</td><td>(AES, SHAKE) * (976, 1344) * (BASE, E)</td></tr>
                         <tr><td>SABER</td><td>(LIGHT, BASE, FIRE) * (128, 192, 256)</td></tr>
                         <tr><td>MLKEM</td><td>512, 768, 1024</td></tr>
