@@ -176,6 +176,7 @@ public final class JcaDigest
             case GOST -> "GOST3411";
             case WHIRLPOOL, TIGER, SHA1, MD5, MD4, MD2, SM3 -> myType.name();
             case BLAKE3 -> pDigestSpec.toString();
+            case ASCON -> getAsconAlgorithm(pDigestSpec);
             default -> throw new GordianDataException("Invalid DigestSpec :- " + pDigestSpec);
         };
     }
@@ -217,6 +218,16 @@ public final class JcaDigest
             case LEN_384 -> "DSTU7564-384";
             default -> "DSTU7564-512";
         };
+    }
+
+    /**
+     * Determine the Kupyna algorithm.
+     *
+     * @param pSpec the digest spec
+     * @return the name
+     */
+    private static String getAsconAlgorithm(final GordianCoreDigestSpec pSpec) {
+        return pSpec.isXofMode() ? "ASCON-XOF128" : "ASCON-HASH256";
     }
 
     /**
