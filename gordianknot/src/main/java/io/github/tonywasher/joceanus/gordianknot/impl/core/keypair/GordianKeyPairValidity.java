@@ -227,7 +227,7 @@ public final class GordianKeyPairValidity {
             case XDH -> myAgreeBuilder.anon(mySpec, mySpec.getEdwardsSpec().is25519()
                     ? GordianAgreementKDF.SHA256KDF
                     : GordianAgreementKDF.SHA512KDF);
-            case SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, SMAUGT ->
+            case SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE, XWING, SMAUGT ->
                     myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
             case FRODO -> myAgreeBuilder.kem(mySpec, GordianAgreementKDF.KMAC128);
             case SM9 -> mySpec.getSM9KeyType() instanceof GordianSM9EncryptType

@@ -37,6 +37,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.Gordia
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianSM9EncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianXMSSEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianXMSSMTEncodedParser;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.parser.GordianXWingEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreBIKESpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFRODOSpec;
@@ -109,6 +110,7 @@ public class GordianCoreKeyPairAlgId
         GordianLMSEncodedParser.register(this);
         GordianSM9EncodedParser.register(this);
         GordianNewHopeEncodedParser.register(this);
+        GordianXWingEncodedParser.register(this);
         GordianKeyPairIdEncodedParser.register(this, GordianCoreFRODOSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreSABERSpec.values());
         GordianKeyPairIdEncodedParser.register(this, GordianCoreMLKEMSpec.values());

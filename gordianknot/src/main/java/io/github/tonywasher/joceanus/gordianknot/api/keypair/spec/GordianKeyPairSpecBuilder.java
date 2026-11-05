@@ -560,6 +560,15 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create XWingKey.
+     *
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec xWing() {
+        return withKeyPairType(GordianKeyPairType.XWING).build();
+    }
+
+    /**
      * Create CompositeKey.
      *
      * @param pSpecs the list of keySpecs

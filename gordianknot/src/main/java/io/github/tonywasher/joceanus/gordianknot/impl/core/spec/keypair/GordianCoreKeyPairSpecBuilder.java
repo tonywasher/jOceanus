@@ -246,6 +246,9 @@ public final class GordianCoreKeyPairSpecBuilder
         /* Add NewHope */
         mySpecs.add(myBuilder.newHope());
 
+        /* Add XWing */
+        mySpecs.add(myBuilder.xWing());
+
         /* Add XMSS/XMSSMT */
         GordianCoreXMSSSpec.listAllPossibleSpecs().forEach(t -> mySpecs.add(myBuilder.xmss(t)));
 

@@ -212,6 +212,11 @@ public enum GordianKeyPairType {
     HYBRIDSIGN,
 
     /**
+     * XWing.
+     */
+    XWING,
+
+    /**
      * Composite.
      */
     COMPOSITE;

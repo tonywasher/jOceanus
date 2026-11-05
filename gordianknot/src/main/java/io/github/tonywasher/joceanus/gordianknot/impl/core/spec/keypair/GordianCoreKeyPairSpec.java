@@ -596,7 +596,7 @@ public class GordianCoreKeyPairSpec
             case SM9 -> theSubSpec instanceof GordianSM9KeyType;
             case HYBRIDKEM -> theSubSpec instanceof GordianCoreHybridKEMSpec;
             case HYBRIDSIGN -> theSubSpec instanceof GordianCoreHybridSignSpec;
-            case NEWHOPE -> theSubSpec == null;
+            case NEWHOPE, XWING -> theSubSpec == null;
             case LMS -> theSubSpec instanceof GordianCoreLMSSpec ls && ls.isValid();
             case EDDSA, XDH -> theSubSpec instanceof GordianCoreEdwardsSpec;
             case COMPOSITE -> theSubSpec instanceof List && checkComposite();
