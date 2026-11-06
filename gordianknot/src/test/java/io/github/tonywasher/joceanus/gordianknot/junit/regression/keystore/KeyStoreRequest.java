@@ -163,7 +163,7 @@ public final class KeyStoreRequest {
                 agreedKeyPairRequestTest(myBuilder.sm9(GordianSM9EncryptType.ENCMASTER)),
                 agreedKeyPairRequestTest(myBuilder.hybridKEM(GordianHybridKEMSpec.MLKEM768_X25519)),
                 agreedKeyPairRequestTest(myBuilder.composite(myBuilder.hqc(GordianHQCSpec.HQC128),
-                        myBuilder.frodo(GordianFRODOSpec.AES976),
+                        myBuilder.ntru(GordianNTRUSpec.HPS509),
                         myBuilder.mlkem(GordianMLKEMSpec.MLKEM512))),
                 DynamicTest.dynamicTest("Cleanup", theState::cleanUp)
         ));
