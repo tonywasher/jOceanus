@@ -36,7 +36,8 @@ public class JcaValidator
     @Override
     protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
         return JcaDigest.isHMacSupported(pDigestType)
-                && validDigestType(pDigestType);
+                && validDigestType(pDigestType)
+                && !pDigestType.equals(GordianDigestType.ASCON);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class JcaValidator
 
         /* Disable non-JCE digests */
         return switch (pDigestType) {
-            case JH, GROESTL, CUBEHASH, KANGAROO, ASCON, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK -> false;
+            case JH, GROESTL, CUBEHASH, KANGAROO, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK -> false;
             default -> true;
         };
     }
@@ -59,7 +60,7 @@ public class JcaValidator
             return false;
         }
         return switch (pKeyType) {
-            case ISAAC, SOSEMANUK, RABBIT, SNOW3G, SKEINXOF, BLAKE2XOF, BLAKE3XOF, ASCON, ELEPHANT, ISAP, PHOTONBEETLE,
+            case ISAAC, SOSEMANUK, RABBIT, SNOW3G, SKEINXOF, BLAKE2XOF, BLAKE3XOF, ELEPHANT, ISAP, PHOTONBEETLE,
                  ROMULUS, SPARKLE, XOODYAK, GIFTCOFB -> false;
             default -> super.validStreamKeyType(pKeyType);
         };

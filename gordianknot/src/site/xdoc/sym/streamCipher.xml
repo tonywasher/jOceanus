@@ -63,7 +63,7 @@ final GordianKey&lt;GordianStreamKeySpec&gt; myKey = myGenerator.generateKey();
                         <tr><td rowspan="2">Blake2X</td><td>Blake2Xs</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                         <tr><td>Blake2Xb</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
                         <tr><td>Blake3Xof</td><td/><td/><td/><td/><td>Y</td><td/><td/></tr>
-                        <tr><td>Ascon</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>Ascon</td><td/><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>Elephant</td><td>160, 176, 200</td><td/><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>ISAP</td><td>A128, A128A, K128, K128A</td><td/><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>PhotonBeetle</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>

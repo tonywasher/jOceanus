@@ -344,6 +344,7 @@ public class JcaCipherFactory
                     ? pKeySpec.getStreamKeyType().name()
                     : "VMPC-KSA3";
             case GRAIN -> "Grain128";
+            case ASCON -> "ASCON-AEAD128";
             case ISAAC, RC4 -> pKeySpec.getStreamKeyType().name();
             default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
         };

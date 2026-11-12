@@ -222,15 +222,6 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
-     * Obtain the CMCE keySpec.
-     *
-     * @return the keySpec.
-     */
-    public GordianCoreCMCESpec getCMCESpec() {
-        return castValue(GordianCoreCMCESpec.class);
-    }
-
-    /**
      * Obtain the FRODO keySpec.
      *
      * @return the keySpec.
@@ -581,7 +572,6 @@ public class GordianCoreKeyPairSpec
             case DSTU -> theSubSpec instanceof GordianCoreDSTUSpec;
             case XMSS -> theSubSpec instanceof GordianCoreXMSSSpec s && s.isValid();
             case SLHDSA -> theSubSpec instanceof GordianCoreSLHDSASpec;
-            case CMCE -> theSubSpec instanceof GordianCoreCMCESpec;
             case FRODO -> theSubSpec instanceof GordianCoreFRODOSpec;
             case SABER -> theSubSpec instanceof GordianCoreSABERSpec;
             case MLKEM -> theSubSpec instanceof GordianCoreMLKEMSpec;
@@ -606,7 +596,7 @@ public class GordianCoreKeyPairSpec
             case SM9 -> theSubSpec instanceof GordianSM9KeyType;
             case HYBRIDKEM -> theSubSpec instanceof GordianCoreHybridKEMSpec;
             case HYBRIDSIGN -> theSubSpec instanceof GordianCoreHybridSignSpec;
-            case NEWHOPE -> theSubSpec == null;
+            case NEWHOPE, XWING -> theSubSpec == null;
             case LMS -> theSubSpec instanceof GordianCoreLMSSpec ls && ls.isValid();
             case EDDSA, XDH -> theSubSpec instanceof GordianCoreEdwardsSpec;
             case COMPOSITE -> theSubSpec instanceof List && checkComposite();
@@ -707,7 +697,6 @@ public class GordianCoreKeyPairSpec
             case GOST -> GordianCoreGOSTSpec.mapCoreSpec(pSubSpec);
             case DSTU -> GordianCoreDSTUSpec.mapCoreSpec(pSubSpec);
             case SLHDSA -> GordianCoreSLHDSASpec.mapCoreSpec(pSubSpec);
-            case CMCE -> GordianCoreCMCESpec.mapCoreSpec(pSubSpec);
             case FRODO -> GordianCoreFRODOSpec.mapCoreSpec(pSubSpec);
             case SABER -> GordianCoreSABERSpec.mapCoreSpec(pSubSpec);
             case MLKEM -> GordianCoreMLKEMSpec.mapCoreSpec(pSubSpec);
@@ -751,7 +740,6 @@ public class GordianCoreKeyPairSpec
             case GOST -> getGOSTSpec().getSpec();
             case DSTU -> getDSTUSpec().getSpec();
             case SLHDSA -> getSLHDSASpec().getSpec();
-            case CMCE -> getCMCESpec().getSpec();
             case FRODO -> getFRODOSpec().getSpec();
             case SABER -> getSABERSpec().getSpec();
             case MLKEM -> getMLKEMSpec().getSpec();

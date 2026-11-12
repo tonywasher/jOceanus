@@ -25,8 +25,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreLMSSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair.JcaKeyPairGenerator.JcaStateAwareKeyPairGenerator;
 import org.bouncycastle.crypto.params.LMSParameters;
-import org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
+import org.bouncycastle.jcajce.spec.LMSHSSKeyGenParameterSpec;
+import org.bouncycastle.jcajce.spec.LMSKeyGenParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.spec.AlgorithmParameterSpec;
@@ -51,7 +51,7 @@ public class JcaLMSKeyPairGenerator
 
         /* Create and initialize the generator */
         final String myJavaType = pKeySpec.getKeyPairType().toString();
-        createFactories(myJavaType, true);
+        createFactories(myJavaType, false);
 
         /* Protect against exceptions */
         try {

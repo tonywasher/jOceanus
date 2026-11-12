@@ -26,7 +26,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.certgateway.GordianCertGate
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianAIMerSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDHSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDSTUSpec;
@@ -153,7 +152,6 @@ public final class KeyStoreRequest {
                 agreedKeyPairRequestTest(myBuilder.x448()),
                 agreedKeyPairRequestTest(myBuilder.newHope()),
                 agreedKeyPairRequestTest(myBuilder.bike(GordianBIKESpec.BIKE128)),
-                agreedKeyPairRequestTest(myBuilder.cmce(GordianCMCESpec.CMCE4608)),
                 agreedKeyPairRequestTest(myBuilder.frodo(GordianFRODOSpec.AES976)),
                 agreedKeyPairRequestTest(myBuilder.hqc(GordianHQCSpec.HQC128)),
                 agreedKeyPairRequestTest(myBuilder.mlkem(GordianMLKEMSpec.MLKEM512)),
@@ -164,8 +162,8 @@ public final class KeyStoreRequest {
                 agreedKeyPairRequestTest(myBuilder.smaugT(GordianSmaugTSpec.MODE1)),
                 agreedKeyPairRequestTest(myBuilder.sm9(GordianSM9EncryptType.ENCMASTER)),
                 agreedKeyPairRequestTest(myBuilder.hybridKEM(GordianHybridKEMSpec.MLKEM768_X25519)),
-                agreedKeyPairRequestTest(myBuilder.composite(myBuilder.cmce(GordianCMCESpec.CMCE4608),
-                        myBuilder.frodo(GordianFRODOSpec.AES976),
+                agreedKeyPairRequestTest(myBuilder.composite(myBuilder.hqc(GordianHQCSpec.HQC128),
+                        myBuilder.ntru(GordianNTRUSpec.HPS509),
                         myBuilder.mlkem(GordianMLKEMSpec.MLKEM512))),
                 DynamicTest.dynamicTest("Cleanup", theState::cleanUp)
         ));

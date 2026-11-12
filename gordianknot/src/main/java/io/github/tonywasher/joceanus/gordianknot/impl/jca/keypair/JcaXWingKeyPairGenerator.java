@@ -17,24 +17,20 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.jca.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
-import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
-
-import java.security.InvalidAlgorithmParameterException;
 
 /**
- * Jca CMCE KeyPair generator.
+ * Jca XWing KeyPair generator.
  */
-public class JcaCMCEKeyPairGenerator
+public class JcaXWingKeyPairGenerator
         extends JcaKeyPairGenerator {
     /**
-     * CMCE algorithm.
+     * XWing algorithm.
      */
-    private static final String CMCE_ALGO = "CMCE";
+    private static final String XWING_ALGO = "X-WING";
 
     /**
      * Constructor.
@@ -43,21 +39,13 @@ public class JcaCMCEKeyPairGenerator
      * @param pKeySpec the keySpec
      * @throws GordianException on error
      */
-    JcaCMCEKeyPairGenerator(final GordianBaseFactory pFactory,
-                            final GordianKeyPairSpec pKeySpec) throws GordianException {
+    JcaXWingKeyPairGenerator(final GordianBaseFactory pFactory,
+                             final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* initialize underlying class */
         super(pFactory, pKeySpec);
 
-        /* Protect against exceptions */
-        try {
-            /* Create and initialize the generator */
-            createFactories(CMCE_ALGO, false);
-            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-            final CMCEParameterSpec myParms = myKeySpec.getCMCESpec().getParameterSpec();
-            getGenerator().initialize(myParms, getRandom());
-
-        } catch (InvalidAlgorithmParameterException e) {
-            throw new GordianCryptoException("Failed to create CMCEgenerator", e);
-        }
+        /* Create and initialize the generator */
+        createFactories(XWING_ALGO, false);
+        getGenerator().initialize(GordianLength.LEN_1024.getLength(), getRandom());
     }
 }

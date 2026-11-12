@@ -175,9 +175,10 @@ public final class JcaSM9KeyPairGenerator {
                 /* Build the private key from encoded */
                 final SM9EncMasterPublicKey myMasterPublic = (SM9EncMasterPublicKey) getPublicKey();
                 final boolean isExchange = GordianSM9EncryptType.EXCHANGE.equals(pKeyType);
+                final byte myHid = isExchange ? SM9EncMasterPrivateKeyParameters.HID_EXCHANGE : SM9EncMasterPrivateKeyParameters.HID;
                 final SM9EncUserPrivateKeySpec mySpec =
                         new SM9EncUserPrivateKeySpec(pEncoding.getEncoded(), myMasterPublic,
-                                pIdentity, SM9EncMasterPrivateKeyParameters.HID, isExchange);
+                                pIdentity, myHid, isExchange);
                 final PrivateKey myDerived = theKeyFactory.generatePrivate(mySpec);
                 final GordianKeyPairSpec myKeyPairSpec = isExchange ? EXCHANGE : ENCRYPT;
                 final JcaSM9EncUserPrivateKey myPrivate = new JcaSM9EncUserPrivateKey(myKeyPairSpec, myDerived);

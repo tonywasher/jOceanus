@@ -50,7 +50,7 @@ public class BouncyAgreementFactory
             case EC, GOST, DSTU, SM2 -> getBCECEngine(mySpec);
             case DH -> getBCDHEngine(mySpec);
             case NEWHOPE -> new BouncyNewHopeAgreementEngine(this, mySpec);
-            case CMCE -> new BouncyCMCEAgreementEngine(this, mySpec);
+            case XWING -> new BouncyXWingAgreementEngine(this, mySpec);
             case FRODO -> new BouncyFrodoAgreementEngine(this, mySpec);
             case SABER -> new BouncySABERAgreementEngine(this, mySpec);
             case MLKEM -> new BouncyMLKEMAgreementEngine(this, mySpec);

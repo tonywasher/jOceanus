@@ -354,7 +354,7 @@ public class LMSPerformance {
          */
         LMSKeyPair(final LMSigParameters pSigParms,
                    final LMOtsParameters pOtsParms) {
-            theParms = new LMSParameters(pSigParms, pOtsParms);
+            theParms = LMSParameters.create(pSigParms, pOtsParms);
         }
 
         /**
@@ -560,7 +560,7 @@ public class LMSPerformance {
         HSSKeyPair(final LMSigParameters pSigParms,
                    final LMOtsParameters pOtsParms,
                    final int pDepth) {
-            theParms = new LMSParameters(pSigParms, pOtsParms);
+            theParms = LMSParameters.create(pSigParms, pOtsParms);
             theDepth = pDepth;
         }
 

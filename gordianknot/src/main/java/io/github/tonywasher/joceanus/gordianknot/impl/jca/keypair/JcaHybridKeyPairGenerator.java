@@ -52,7 +52,7 @@ public class JcaHybridKeyPairGenerator
             getGenerator().initialize(null, getRandom());
 
         } catch (InvalidAlgorithmParameterException e) {
-            throw new GordianCryptoException("Failed to create HQCgenerator", e);
+            throw new GordianCryptoException("Failed to create HybridGenerator", e);
         }
     }
 }

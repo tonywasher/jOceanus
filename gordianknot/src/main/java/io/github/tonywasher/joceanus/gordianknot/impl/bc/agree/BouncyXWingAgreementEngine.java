@@ -19,20 +19,20 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianIOException;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyCMCEKeyPair.BouncyCMCEPrivateKey;
-import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyCMCEKeyPair.BouncyCMCEPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXWingKeyPair.BouncyXWingPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyXWingKeyPair.BouncyXWingPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import org.bouncycastle.crypto.SecretWithEncapsulation;
-import org.bouncycastle.crypto.kems.CMCEKEMExtractor;
-import org.bouncycastle.crypto.kems.CMCEKEMGenerator;
+import org.bouncycastle.pqc.crypto.xwing.XWingKEMExtractor;
+import org.bouncycastle.pqc.crypto.xwing.XWingKEMGenerator;
 
 import javax.security.auth.DestroyFailedException;
 
 /**
- * CMCE Agreement Engine.
+ * XWing Agreement Engine.
  */
-public class BouncyCMCEAgreementEngine
+public class BouncyXWingAgreementEngine
         extends BouncyAgreementBase {
     /**
      * Constructor.
@@ -41,8 +41,8 @@ public class BouncyCMCEAgreementEngine
      * @param pSpec    the agreementSpec
      * @throws GordianException on error
      */
-    BouncyCMCEAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                              final GordianCoreAgreementSpec pSpec) throws GordianException {
+    BouncyXWingAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                               final GordianCoreAgreementSpec pSpec) throws GordianException {
         /* Initialize underlying class */
         super(pFactory, pSpec);
     }
@@ -52,8 +52,8 @@ public class BouncyCMCEAgreementEngine
         /* Protect against exceptions */
         try {
             /* Create encapsulation */
-            final BouncyCMCEPublicKey myPublic = (BouncyCMCEPublicKey) getPublicKey(getServerKeyPair());
-            final CMCEKEMGenerator myGenerator = new CMCEKEMGenerator(getRandom());
+            final BouncyXWingPublicKey myPublic = (BouncyXWingPublicKey) getPublicKey(getServerKeyPair());
+            final XWingKEMGenerator myGenerator = new XWingKEMGenerator(getRandom());
             final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
 
             /* Store the encapsulation */
@@ -71,8 +71,8 @@ public class BouncyCMCEAgreementEngine
     @Override
     public void processClientHello() throws GordianException {
         /* Create encapsulation */
-        final BouncyCMCEPrivateKey myPrivate = (BouncyCMCEPrivateKey) getPrivateKey(getServerKeyPair());
-        final CMCEKEMExtractor myExtractor = new CMCEKEMExtractor(myPrivate.getPrivateKey());
+        final BouncyXWingPrivateKey myPrivate = (BouncyXWingPrivateKey) getPrivateKey(getServerKeyPair());
+        final XWingKEMExtractor myExtractor = new XWingKEMExtractor(myPrivate.getPrivateKey());
 
         /* Parse encapsulated message and store secret */
         final byte[] myMessage = getClientEncapsulated();

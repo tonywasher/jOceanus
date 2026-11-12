@@ -67,7 +67,7 @@ public class JcaXMSSSignature
         JcaKeyPair.checkKeyPair(myPair);
         checkKeyPairForSignature(myPair);
         final String mySignName = getAlgorithmForKeyPair(myPair);
-        setSigner(getJavaSignature(mySignName, true));
+        setSigner(getJavaSignature(mySignName, false));
 
         /* pass on call */
         super.initForSigning(pParams);

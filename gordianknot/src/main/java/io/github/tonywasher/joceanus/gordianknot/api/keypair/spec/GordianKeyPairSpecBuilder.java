@@ -318,16 +318,6 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
-     * Create CMCEKey.
-     *
-     * @param pSpec the CMCE Spec
-     * @return the KeySpec
-     */
-    default GordianKeyPairSpec cmce(final GordianCMCESpec pSpec) {
-        return withKeyPairType(GordianKeyPairType.CMCE).withEnumSubSpec(pSpec).build();
-    }
-
-    /**
      * Create FRODOKey.
      *
      * @param pSpec the FRODO Spec
@@ -567,6 +557,15 @@ public interface GordianKeyPairSpecBuilder {
      */
     default GordianKeyPairSpec hybridSign(final GordianHybridSignSpec pSpec) {
         return withKeyPairType(GordianKeyPairType.HYBRIDSIGN).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
+     * Create XWingKey.
+     *
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec xWing() {
+        return withKeyPairType(GordianKeyPairType.XWING).build();
     }
 
     /**

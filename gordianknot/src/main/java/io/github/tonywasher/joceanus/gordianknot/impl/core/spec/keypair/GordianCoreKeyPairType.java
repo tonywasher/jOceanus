@@ -105,8 +105,8 @@ public final class GordianCoreKeyPairType {
      */
     public boolean isStandardJca() {
         return switch (theType) {
-            case RSA, DSA, EC, ELGAMAL, DH, SM2, SM9, GOST, DSTU, XDH, EDDSA, MLKEM, MLDSA, SLHDSA, CMCE, FRODO,
-                 HYBRIDKEM -> true;
+            case RSA, DSA, EC, ELGAMAL, DH, SM2, SM9, GOST, DSTU, XDH, EDDSA, MLKEM, MLDSA, SLHDSA, FRODO,
+                 HYBRIDKEM, XWING -> true;
             default -> false;
         };
     }

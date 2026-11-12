@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.keypair.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -27,7 +28,9 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPairGenerator;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
+import org.bouncycastle.crypto.generators.SM2KeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
 import org.bouncycastle.crypto.params.ECNamedDomainParameters;
@@ -172,7 +175,9 @@ public final class BouncyEllipticKeyPair {
             final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(myDomain, getRandom());
 
             /* Create and initialise the generator */
-            setGenerator(new ECKeyPairGenerator(), myParams);
+            final AsymmetricCipherKeyPairGenerator myGenerator = GordianKeyPairType.SM2.equals(myKeySpec.getKeyPairType())
+                    ? new SM2KeyPairGenerator() : new ECKeyPairGenerator();
+            setGenerator(myGenerator, myParams);
             setFactorySet(BouncyStdKeyFactorySet.INSTANCE);
         }
 

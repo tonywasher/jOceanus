@@ -39,6 +39,6 @@ public class JcaLMSSignature
         super(pFactory, pSignatureSpec);
 
         /* Create the signature class */
-        setSigner(getJavaSignature("LMS", true));
+        setSigner(getJavaSignature("LMS", false));
     }
 }

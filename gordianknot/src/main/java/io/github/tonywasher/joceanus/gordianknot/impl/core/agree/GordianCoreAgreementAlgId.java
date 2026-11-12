@@ -222,9 +222,6 @@ public class GordianCoreAgreementAlgId {
             case DSTU:
                 myId = myId.branch(Integer.toString(mySpec.getDSTUSpec().getSpec().ordinal() + 1));
                 break;
-            case CMCE:
-                myId = myId.branch(Integer.toString(mySpec.getCMCESpec().getSpec().ordinal() + 1));
-                break;
             case FRODO:
                 myId = myId.branch(Integer.toString(mySpec.getFRODOSpec().getSpec().ordinal() + 1));
                 break;

@@ -87,11 +87,6 @@ public enum GordianKeyPairType {
     SLHDSA,
 
     /**
-     * CMCE.
-     */
-    CMCE,
-
-    /**
      * FRODO.
      */
     FRODO,
@@ -215,6 +210,11 @@ public enum GordianKeyPairType {
      * HybridSign.
      */
     HYBRIDSIGN,
+
+    /**
+     * XWing.
+     */
+    XWING,
 
     /**
      * Composite.

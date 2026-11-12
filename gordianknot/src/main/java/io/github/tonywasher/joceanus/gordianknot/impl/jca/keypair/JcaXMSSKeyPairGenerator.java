@@ -59,7 +59,7 @@ public class JcaXMSSKeyPairGenerator
 
             /* Create and initialize the generator */
             final String myJavaType = myXMSSKeySpec.getKeyType().name();
-            createFactories(myJavaType, true);
+            createFactories(myJavaType, false);
             getGenerator().initialize(myAlgo, getRandom());
 
         } catch (InvalidAlgorithmParameterException e) {

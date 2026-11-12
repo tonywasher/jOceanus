@@ -29,8 +29,8 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.crypto.params.XMSSMTParameters;
 import org.bouncycastle.crypto.params.XMSSParameters;
-import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
+import org.bouncycastle.jcajce.spec.XMSSMTParameterSpec;
+import org.bouncycastle.jcajce.spec.XMSSParameterSpec;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
